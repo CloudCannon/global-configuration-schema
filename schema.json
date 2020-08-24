@@ -1,10 +1,10 @@
 {
 	"$id": "https://github.com/CloudCannon/build-configuration-schema/blob/v0.0.1/schema.json",
-  "$schema": "http://json-schema.org/draft-07/schema#",
-  "type": "object",
-  "title": "CloudCannon site configuration",
-  "description": "Normalised configuration format for sites across different static site generators",
-  "properties": {
+	"$schema": "http://json-schema.org/draft-07/schema#",
+	"type": "object",
+	"title": "CloudCannon site configuration",
+	"description": "Normalised configuration format for sites across different static site generators",
+	"properties": {
 		"source": {
 			"type": "string",
 			"description": "The path to your site files",
@@ -92,7 +92,7 @@
 			"description": "Visual adjustments for the source editor",
 			"properties": {
 				"tab-size": {"type": "number"},
-				"show-gutter":  {"type": "boolean"},
+				"show-gutter":	{"type": "boolean"},
 				"theme": {"type": "string"}
 			}
 		},
@@ -165,5 +165,5 @@
 			"type": "object",
 			"additionalProperties": {"type": "string"}
 		}
-  }
+	}
 }
