@@ -1,5 +1,5 @@
 {
-	"$id": "https://github.com/CloudCannon/build-configuration-schema/blob/v0.0.1/schema.json",
+	"$id": "https://raw.githubusercontent.com/CloudCannon/build-configuration-schema/v0.0.2/schema.json",
 	"$schema": "http://json-schema.org/draft-07/schema#",
 	"type": "object",
 	"title": "CloudCannon site configuration",
@@ -12,14 +12,14 @@
 		},
 
 		"timezone": {
-			"type": "string",
+			"type": "string,null",
 			"description": "The timezone of your site in IANA format"
 		},
 
 		"include": {
 			"type": "array",
 			"description": "Files that are normally excluded, but should be included in a build",
-			"contains": {
+			"items": {
 				"type": "string",
 				"format": "uri-reference"
 			}
@@ -28,42 +28,39 @@
 		"exclude": {
 			"type": "array",
 			"description": "Files that are normally included, but should be excluded from a build",
-			"contains": {
+			"items": {
 				"type": "string",
 				"format": "uri-reference"
 			}
 		},
 
 		"base-url": {
-			"type": "string",
+			"type": "string,null",
 			"description": "The path in your site URL after the domain and before the rest",
 			"format": "uri-reference"
 		},
 
 		"collections": {
-			"type": "array",
+			"type": "object",
 			"description": "Supporting information about the structured content groups on your site",
-			"contains": {
-				"type": "object",
-				"additionalProperties": true,
-				"properties": {
-					"_sort-key": {"type": "string"},
-					"_subtext-key": {"type": "string"},
-					"_image-key": {"type": "string"},
-					"_image-size": {"type": "string", "enum": ["cover", "contain", "unset"]},
-					"_singular-name": {"type": "string"},
-					"_singular-key": {"type": "string"},
-					"_disable-add": {"type": "boolean"},
-					"_icon": {"type": "string"},
-					"_add-options": {
-						"type": "array",
-						"contains": {
-							"type": "object",
-							"properties": {
-								"name": {"type": "string"},
-								"icon": {"type": "string"},
-								"href": {"type": "string"}
-							}
+			"additionalProperties": {
+				"output": {"type": "boolean"},
+				"_sort-key": {"type": "string"},
+				"_subtext-key": {"type": "string"},
+				"_image-key": {"type": "string"},
+				"_image-size": {"type": "string", "enum": ["cover", "contain", "unset"]},
+				"_singular-name": {"type": "string"},
+				"_singular-key": {"type": "string"},
+				"_disable-add": {"type": "boolean"},
+				"_icon": {"type": "string"},
+				"_add-options": {
+					"type": "array",
+					"items": {
+						"type": "object",
+						"properties": {
+							"name": {"type": "string"},
+							"icon": {"type": "string"},
+							"href": {"type": "string"}
 						}
 					}
 				}
@@ -80,7 +77,7 @@
 			"type": "object",
 			"properties": {
 				"default-path": {
-					"type": "string",
+					"type": "string,null",
 					"description": "The path the editor opens at if no other path is given",
 					"format": "uri-reference"
 				}
@@ -98,34 +95,37 @@
 		},
 
 		"explore": {
-			"type": "array",
-			"description": "Custom groups to override the defaults for the explore interface",
-			"contains": {
-				"type": "object",
-				"properties": {
-					"heading": {"type": "string"},
-					"collections": {
-						"type": "array",
-						"contains": {"type": "string"}
+			"type": "object",
+			"properties": {
+				"groups": {
+					"type": "array",
+					"description": "Custom groups to override the defaults for the explore interface",
+					"items": {
+						"type": "object",
+						"properties": {
+							"heading": {"type": "string"},
+							"collections": {
+								"type": "array",
+								"items": {"type": "string"}
+							}
+						}
 					}
 				}
 			}
 		},
 
 		"paths": {
-			"type": "array",
+			"type": "object",
 			"description": "Custom build paths used in the editor to find and place files",
-			"contains": {
-				"type": "object",
-				"additionalProperties": {"type": "string", "format": "uri-reference"},
-				"properties": {
-					"uploads": {"type": "string", "format": "uri-reference"},
-					"plugins": {"type": "string", "format": "uri-reference"},
-					"data": {"type": "string", "format": "uri-reference"},
-					"collections": {"type": "string", "format": "uri-reference"},
-					"includes": {"type": "string", "format": "uri-reference"},
-					"layouts": {"type": "string", "format": "uri-reference"}
-				}
+			"additionalProperties": {"type": "string", "format": "uri-reference"},
+			"properties": {
+				"uploads": {"type": "string,null", "format": "uri-reference"},
+				"cache": {"type": "string,null", "format": "uri-reference"},
+				"plugins": {"type": "string,null", "format": "uri-reference"},
+				"data": {"type": "string,null", "format": "uri-reference"},
+				"collections": {"type": "string,null", "format": "uri-reference"},
+				"includes": {"type": "string,null", "format": "uri-reference"},
+				"layouts": {"type": "string,null", "format": "uri-reference"}
 			}
 		},
 
@@ -138,7 +138,7 @@
 					"style": {"type": "string", "enum": ["select", "modal"]},
 					"values": {
 						"type": "array",
-						"contains": {
+						"items": {
 							"type": "object",
 							"properties": {
 								"label": {"type": "string"},
@@ -147,7 +147,7 @@
 								"description": {"type": "string"},
 								"tags": {
 									"type": "array",
-									"contains": {"type": "string"}
+									"items": {"type": "string"}
 								},
 								"value": {"type": "object"}
 							}
@@ -155,15 +155,12 @@
 					}
 				}
 			}
-		}
-	},
+		},
 
-	"select-data": {
-		"type": "object",
-		"description": "Data source for populating select and multiselect inputs in the editor",
-		"additionalProperties": {
+		"select-data": {
 			"type": "object",
-			"additionalProperties": {"type": "string"}
+			"description": "Data source for populating select and multiselect inputs in the editor",
+			"additionalProperties": {"type": "object,array"}
 		}
 	}
 }
