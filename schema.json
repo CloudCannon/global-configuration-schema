@@ -1,5 +1,5 @@
 {
-	"$id": "https://raw.githubusercontent.com/CloudCannon/build-configuration-schema/v0.0.3/schema.json",
+	"$id": "https://raw.githubusercontent.com/CloudCannon/build-configuration-schema/v0.0.4/schema.json",
 	"$schema": "http://json-schema.org/draft-07/schema#",
 	"type": "object",
 	"title": "CloudCannon site configuration",
@@ -61,7 +61,15 @@
 		"collections": {
 			"type": "object",
 			"description": "Supporting information about the structured content groups on your site",
+			"properties": {
+				"_path": {
+					"type": "string",
+					"format": "uri-reference"
+				}
+			},
 			"additionalProperties": {
+				"name": {"type": "string"},
+				"title": {"type": "string"},
 				"output": {"type": "boolean"},
 				"_sort-key": {"type": "string"},
 				"_subtext-key": {"type": "string"},
