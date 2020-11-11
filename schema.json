@@ -201,6 +201,7 @@
 				"cache": {"type": "string,null", "format": "uri-reference"},
 				"plugins": {"type": "string,null", "format": "uri-reference"},
 				"data": {"type": "string,null", "format": "uri-reference"},
+				"pages": {"type": "string,null", "format": "uri-reference"},
 				"collections": {"type": "string,null", "format": "uri-reference"},
 				"includes": {"type": "string,null", "format": "uri-reference"},
 				"layouts": {"type": "string,null", "format": "uri-reference"}
