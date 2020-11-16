@@ -137,7 +137,7 @@
 
 		"defaults": {
 			"type": "array",
-			"description": "Fallback/default values applied to different files via scope and type",
+			"description": "Fallback/default values applied to different files via scope and type. This is only useful for a file in the time between being created and first used in a successful build.",
 			"items": {
 				"scope": {
 					"type": "object",
