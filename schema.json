@@ -1,245 +1,916 @@
 {
-	"$id": "https://raw.githubusercontent.com/CloudCannon/build-configuration-schema/v0.0.4/schema.json",
-	"$schema": "http://json-schema.org/draft-07/schema#",
+	"$schema": "https://json-schema.org/draft/2020-12/schema",
+	"$id": "https://raw.githubusercontent.com/CloudCannon/global-configuration-schema/v0.0.5/schema.json",
 	"type": "object",
 	"title": "CloudCannon site configuration",
 	"description": "Normalised configuration format for sites across different static site generators",
-	"properties": {
-		"time": {
+	"required": [],
+	"$defs": {
+		"collection_create_path": {
 			"type": "string",
-			"description": "The time this file was created",
-			"format": "date-time"
+			"default": "[relative_base_path]/{title|slugify}.md"
 		},
-
-		"cloudcannon": {
-			"name": {
-				"type": "string",
-				"description": "The name of the plugin or extension that created this file"
-			},
-			"version": {
-				"type": "string",
-				"description": "The version of the plugin or extension that created this file",
-				"pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"
-			}
-		},
-
-		"source": {
+		"collection_filter_base": {
 			"type": "string",
-			"description": "The path to your site files",
-			"format": "uri-reference"
+			"enum": [
+				"all",
+				"none",
+				"strict"
+			],
+			"default": "all"
 		},
-
-		"timezone": {
-			"type": "string,null",
-			"description": "The timezone of your site in IANA format"
+		"preview_image_fit": {
+			"type": "string",
+			"enum": [
+				"padded",
+				"cover",
+				"contain",
+				"cover-top"
+			],
+			"default": "padded"
 		},
-
-		"include": {
-			"type": "array",
-			"description": "Files that are normally excluded, but should be included in a build",
-			"items": {
-				"type": "string",
-				"format": "uri-reference"
-			}
-		},
-
-		"exclude": {
-			"type": "array",
-			"description": "Files that are normally included, but should be excluded from a build",
-			"items": {
-				"type": "string",
-				"format": "uri-reference"
-			}
-		},
-
-		"base-url": {
-			"type": "string,null",
-			"description": "The path in your site URL after the domain and before the rest",
-			"format": "uri-reference"
-		},
-
-		"collections": {
-			"type": "object",
-			"description": "Supporting information about the structured content groups on your site",
-			"properties": {
-				"_path": {
-					"type": "string",
-					"format": "uri-reference"
-				}
-			},
-			"additionalProperties": {
-				"name": {"type": "string"},
-				"title": {"type": "string"},
-				"output": {"type": "boolean"},
-				"_sort-key": {"type": "string"},
-				"_subtext-key": {"type": "string"},
-				"_image-key": {"type": "string"},
-				"_image-size": {"type": "string", "enum": ["cover", "contain", "unset"]},
-				"_singular-name": {"type": "string"},
-				"_singular-key": {"type": "string"},
-				"_disable-add": {"type": "boolean"},
-				"_icon": {"type": "string"},
-				"_add-options": {
-					"type": "array",
-					"items": {
-						"type": "object",
-						"properties": {
-							"name": {"type": "string"},
-							"icon": {"type": "string"},
-							"href": {"type": "string"}
-						}
+		"preview_entry": {
+			"oneOf": [
+				{
+					"type": "string"
+				},
+				{
+					"type": "boolean",
+					"enum": [
+						false
+					]
+				},
+				{
+					"type": "object",
+					"properties": {
+						"oneOf": [
+							{
+								"type": "string"
+							},
+							{
+								"type": "boolean"
+							},
+							{
+								"type": "object",
+								"required": [
+									"key"
+								],
+								"properties": {
+									"key": {
+										"type": "string"
+									}
+								}
+							}
+						]
 					}
 				}
-			}
+			]
 		},
-
-		"comments": {
+		"schema_entry": {
 			"type": "object",
-			"description": "Helpful labels added to the editor for the matching keys",
-			"additionalProperties": {"type": "string"}
+			"description": "",
+			"properties": {}
 		},
-
-		"input-options": {
+		"collection_sort_key": {
+			"type": "string",
+			"description": "Defines the field containing the value to sort on inside each collection item’s data."
+		},
+		"collection_sort_order": {
+			"type": "string",
+			"description": "Controls which sort values come first.",
+			"enum": [
+				"asc",
+				"ascending",
+				"desc",
+				"descending"
+			],
+			"default": "ascending"
+		},
+		"_inputs": {
 			"type": "object",
-			"description": "Set of options to change how inputs behave in the editor",
+			"description": "Controls the behavior and appearance of your inputs in the Data Editor.",
 			"additionalProperties": {
 				"type": "object",
-				"properties": {
-					"bold": {"type": "boolean"},
-					"italic": {"type": "boolean"},
-					"removeformat": {"type": "boolean"},
-					"link": {"type": "boolean"},
-					"undo": {"type": "boolean"},
-					"redo": {"type": "boolean"},
-					"underline": {"type": "boolean"},
-					"strike": {"type": "boolean"},
-					"subscript": {"type": "boolean"},
-					"superscript": {"type": "boolean"},
-					"code": {"type": "boolean"},
-					"format": {"type": "boolean,string"},
-					"blockquote": {"type": "boolean"},
-					"horizontalrule": {"type": "boolean"},
-					"numberedlist": {"type": "boolean"},
-					"bulletedlist": {"type": "boolean"},
-					"outdent": {"type": "boolean"},
-					"indent": {"type": "boolean"},
-					"image": {"type": "boolean"},
-					"embed": {"type": "boolean"},
-					"table": {"type": "boolean"},
-					"styles": {"type": "string", "format": "uri-reference"},
-					"left": {"type": "boolean,string"},
-					"center": {"type": "boolean,string"},
-					"right": {"type": "boolean,string"},
-					"justify": {"type": "boolean,string"}
-				}
-			}
-		},
-
-		"defaults": {
-			"type": "array",
-			"description": "Fallback/default values applied to different files via scope and type. This is only useful for a file in the time between being created and first used in a successful build.",
-			"items": {
-				"scope": {
-					"type": "object",
-					"description": "The path and/or type to identify which files to apply the values to",
-					"properties": {
-						"path": {"type": "string"},
-						"type": {"type": "string"}
-					}
-				},
-				"values": {"type": "object"}
-			}
-		},
-
-		"editor": {
-			"type": "object",
-			"properties": {
-				"default-path": {
-					"type": "string,null",
-					"description": "The path the editor opens at if no other path is given",
-					"format": "uri-reference"
-				}
-			}
-		},
-
-		"source-editor": {
-			"type": "object",
-			"description": "Visual adjustments for the source editor",
-			"properties": {
-				"tab-size": {"type": "number"},
-				"show-gutter":	{"type": "boolean"},
-				"theme": {"type": "string"}
-			}
-		},
-
-		"explore": {
-			"type": "object",
-			"properties": {
-				"groups": {
-					"type": "array",
-					"description": "Custom groups to override the defaults for the explore interface",
-					"items": {
-						"type": "object",
-						"properties": {
-							"heading": {"type": "string"},
-							"collections": {
-								"type": "array",
-								"items": {"type": "string"}
+				"allOf": [
+					{
+						"if": {
+							"properties": {
+								"type": {
+									"anyOf": [
+										{
+											"const": "markdown"
+										},
+										{
+											"const": "html"
+										}
+									]
+								}
+							}
+						},
+						"then": {
+							"properties": {
+								"options": {
+									"type": "object",
+									"description": "Options passed on to the rich text input.",
+									"properties": {
+										"bold": {
+											"type": "boolean"
+										},
+										"italic": {
+											"type": "boolean"
+										},
+										"removeformat": {
+											"type": "boolean"
+										},
+										"link": {
+											"type": "boolean"
+										},
+										"undo": {
+											"type": "boolean"
+										},
+										"redo": {
+											"type": "boolean"
+										},
+										"underline": {
+											"type": "boolean"
+										},
+										"strike": {
+											"type": "boolean"
+										},
+										"subscript": {
+											"type": "boolean"
+										},
+										"superscript": {
+											"type": "boolean"
+										},
+										"code": {
+											"type": "boolean"
+										},
+										"format": {
+											"oneOf": [
+												{
+													"type": "boolean"
+												},
+												{
+													"type": "string"
+												}
+											]
+										},
+										"blockquote": {
+											"type": "boolean"
+										},
+										"horizontalrule": {
+											"type": "boolean"
+										},
+										"numberedlist": {
+											"type": "boolean"
+										},
+										"bulletedlist": {
+											"type": "boolean"
+										},
+										"outdent": {
+											"type": "boolean"
+										},
+										"indent": {
+											"type": "boolean"
+										},
+										"image": {
+											"type": "boolean"
+										},
+										"embed": {
+											"type": "boolean"
+										},
+										"table": {
+											"type": "boolean"
+										},
+										"styles": {
+											"type": "string",
+											"format": "uri-reference"
+										},
+										"left": {
+											"oneOf": [
+												{
+													"type": "boolean"
+												},
+												{
+													"type": "string"
+												}
+											]
+										},
+										"center": {
+											"oneOf": [
+												{
+													"type": "boolean"
+												},
+												{
+													"type": "string"
+												}
+											]
+										},
+										"right": {
+											"oneOf": [
+												{
+													"type": "boolean"
+												},
+												{
+													"type": "string"
+												}
+											]
+										},
+										"justify": {
+											"oneOf": [
+												{
+													"type": "boolean"
+												},
+												{
+													"type": "string"
+												}
+											]
+										}
+									}
+								}
 							}
 						}
 					}
+				],
+				"properties": {
+					"type": {
+						"type": "string",
+						"description": "Changes the editing interface for an input. Each input appears and behaves differently, takes different options, and processes different values.",
+						"enum": [
+							"text",
+							"textarea",
+							"email",
+							"disabled",
+							"pinterest",
+							"facebook",
+							"twitter",
+							"github",
+							"instagram",
+							"code",
+							"checkbox",
+							"switch",
+							"color",
+							"number",
+							"range",
+							"url",
+							"text",
+							"html",
+							"markdown",
+							"date",
+							"datetime",
+							"time",
+							"file",
+							"image",
+							"document",
+							"select",
+							"multiselect",
+							"choice",
+							"multichoice",
+							"object",
+							"array"
+						]
+					},
+					"label": {
+						"type": "string",
+						"description": "Optionally changes the text above an input."
+					},
+					"comment": {
+						"type": "string",
+						"description": "Changes the subtext below the label. Has no default. Supports a limited set of Markdown: links, bold, italic, subscript, superscript and inline code elements are allowed."
+					},
+					"options": {
+						"type": "object",
+						"description": "Options passed on to the input. These are specific to each input."
+					},
+					"instance_value": {
+						"type": "string",
+						"description": "Controls if and how the value of this input is instantiated when created. This occurs when creating files, or adding array items containing the configured input.",
+						"enum": [
+							"UUID",
+							"NOW"
+						]
+					},
+					"hidden": {
+						"oneOf": [
+							{
+								"type": "string",
+								"description": "Toggles the visibility of this input. This hides based on the value of another sibling input. This can start with a ! to reverse the value."
+							},
+							{
+								"type": "boolean",
+								"description": "Toggles the visibility of this input. Hidden if true."
+							}
+						]
+					},
+					"cascade": {
+						"type": "boolean",
+						"description": "Specifies whether or not this input configuration should be merged with any matching, less specific configuration.",
+						"default": true
+					}
 				}
 			}
 		},
-
-		"paths": {
+		"_select_data": {
 			"type": "object",
-			"description": "Custom build paths used in the editor to find and place files",
-			"additionalProperties": {"type": "string", "format": "uri-reference"},
-			"properties": {
-				"uploads": {"type": "string,null", "format": "uri-reference"},
-				"cache": {"type": "string,null", "format": "uri-reference"},
-				"plugins": {"type": "string,null", "format": "uri-reference"},
-				"data": {"type": "string,null", "format": "uri-reference"},
-				"pages": {"type": "string,null", "format": "uri-reference"},
-				"collections": {"type": "string,null", "format": "uri-reference"},
-				"includes": {"type": "string,null", "format": "uri-reference"},
-				"layouts": {"type": "string,null", "format": "uri-reference"}
+			"description": "Fixed data source for populating select and multiselect inputs in the editor.",
+			"additionalProperties": {
+				"oneOf": [
+					{
+						"type": "object"
+					},
+					{
+						"type": "array"
+					}
+				]
 			}
 		},
-
-		"array-structures": {
+		"_structures": {
 			"type": "object",
 			"description": "Structured values for editors adding new items to arrays",
 			"additionalProperties": {
 				"type": "object",
 				"properties": {
-					"style": {"type": "string", "enum": ["select", "modal"]},
+					"style": {
+						"type": "string",
+						"enum": [
+							"select",
+							"modal"
+						]
+					},
 					"values": {
 						"type": "array",
 						"items": {
 							"type": "object",
 							"properties": {
-								"label": {"type": "string"},
-								"icon": {"type": "string"},
-								"image": {"type": "string", "format": "uri-reference"},
-								"description": {"type": "string"},
+								"label": {
+									"type": "string"
+								},
+								"icon": {
+									"type": "string"
+								},
+								"image": {
+									"type": "string",
+									"format": "uri-reference"
+								},
+								"description": {
+									"type": "string"
+								},
 								"tags": {
 									"type": "array",
-									"items": {"type": "string"}
+									"items": {
+										"type": "string"
+									}
 								},
-								"value": {"type": "object"}
+								"value": {
+									"type": "object"
+								}
 							}
 						}
 					}
 				}
 			}
+		}
+	},
+	"properties": {
+		"base_url": {
+			"type": "string",
+			"format": "uri-reference",
+			"description": "The subpath your output files are mounted at."
 		},
-
-		"select-data": {
+		"collections_config": {
 			"type": "object",
-			"description": "Data source for populating select and multiselect inputs in the editor",
-			"additionalProperties": {"type": "object,array"}
+			"description": "Definitions for your collections, the related sets of content files for your site grouped by folder. Entries are keyed by your collection key, and contain configuration specific to that collection.",
+			"additionalProperties": {
+				"type": "object",
+				"properties": {
+					"add_options": {
+						"type": "array",
+						"description": "Changes the options presented in the add menu in the collection file list. Defaults to an automatically generated list from schemas, or first file in that collection if no schemas are configured.",
+						"items": {
+							"type": "object",
+							"properties": {
+								"name": {
+									"type": "string",
+									"description": "The text displayed for the menu item. Defaults to using name from the matching schema if set."
+								},
+								"icon": {
+									"type": "string",
+									"description": "The icon next to the text in the menu item. Must match a Material Icon name. Defaults to using icon from the matching schema if set, then falls back to add."
+								},
+								"href": {
+									"type": "string",
+									"format": "uri-reference",
+									"description": "The link that opens when the option is clicked. Can either be an external or internal link. If internal, the link is relative to the current site. If this is set, the collection, editor, base_path and schema options are ignored. Since this acts as an override, we recommend using those options directly in favor of this if possible."
+								},
+								"editor": {
+									"type": "string",
+									"description": "The editor to open the new file in. Must be one of content, data, or visual. Defaults to an appropriate editor for new file’s type if possible. If no default editor can be calculated, or the editor does not support the new file type, a warning is shown in place of the editor."
+								},
+								"base_path": {
+									"type": "string",
+									"description": "Enforces a path for new files to be created in, regardless of path the user is currently navigated to within the collection file list. Relative to the path of the collection defined in collection. Defaults to the path within the collection the user is currently navigated to."
+								},
+								"collection": {
+									"type": "string",
+									"description": "Sets which collection this action is creating a file in. This is used when matching the value for schema. Defaults to the containing collection these add_options are configured in."
+								},
+								"schema": {
+									"type": "string",
+									"description": "The schema that new files are created from with this action. This schema is not restricted to the containing collection, and is instead relative to the collection specified with collection. Defaults to default if schemas are configured for the collection."
+								},
+								"default_content_file": {
+									"type": "string",
+									"description": "The path to a file used to populate the initial contents of a new file if no schemas are configured. We recommend using schemas, and this is ignored if a schema is available."
+								}
+							}
+						}
+					},
+					"create": {
+						"description": "The create path definition to control where new files are saved to inside this collection. Defaults to '[relative_base_path]/{title|slugify}.md'.",
+						"oneOf": [
+							{
+								"type": "object",
+								"properties": {
+									"extra_data": {
+										"type": "object",
+										"description": "Adds to the available data placeholders coming from the file. Entry values follow the same format as path, and are processed sequentially before path. These values are not saved back to your file."
+									},
+									"path": {
+										"$ref": "#/$defs/collection_create_path"
+									},
+									"publish_to": {
+										"type": "string",
+										"description": "Defines a target collection when publishing. When a file is published (currently only relevant to Jekyll), the target collection’s create definition is used instead. Unless you are changing the default Jekyll publish flow it is unlikely you need to set this."
+									},
+									"_inputs": {
+										"$ref": "#/$defs/_inputs"
+									},
+									"_select_data": {
+										"$ref": "#/$defs/_select_data"
+									},
+									"_structures": {
+										"$ref": "#/$defs/_structures"
+									}
+								},
+								"required": [
+									"path"
+								]
+							},
+							{
+								"$ref": "#/$defs/collection_create_path"
+							}
+						]
+					},
+					"disable_add": {
+						"type": "boolean",
+						"description": "Prevents users from adding new files in the collection file list if true.",
+						"default": false
+					},
+					"disable_add_folder": {
+						"type": "boolean",
+						"description": "Prevents users from adding new folders in the collection file list if true.",
+						"default": false
+					},
+					"disable_file_actions": {
+						"type": "boolean",
+						"description": "Prevents users from renaming, moving and deleting files in the collection file list if true.",
+						"default": false
+					},
+					"description": {
+						"type": "string",
+						"description": "Text or Markdown to show above the collection file list."
+					},
+					"documentation": {
+						"type": "object",
+						"required": [
+							"url"
+						],
+						"properties": {
+							"url": {
+								"type": "string",
+								"format": "uri-reference",
+								"description": "The href value of the link"
+							},
+							"text": {
+								"type": "string",
+								"description": "The visible text used in the link.",
+								"default": "Documentation"
+							},
+							"icon": {
+								"type": "string",
+								"description": "The icon displayed next to the link. Must be a Material Icon name.",
+								"default": "auto_stories"
+							}
+						}
+					},
+					"filter": {
+						"oneOf": [
+							{
+								"type": "object",
+								"properties": {
+									"base": {
+										"$ref": "#/$defs/collection_filter_base"
+									},
+									"exclude": {
+										"type": "array",
+										"description": "Set of paths for files to be hidden. Paths here take priority over those listed in include.",
+										"items": {
+											"type": "string"
+										}
+									},
+									"include": {
+										"type": "array",
+										"description": "Set of paths for files to be included. Has no effect if the files are already visible.",
+										"items": {
+											"type": "string"
+										}
+									}
+								},
+								"required": [
+									"path"
+								]
+							},
+							{
+								"$ref": "#/$defs/collection_filter_base"
+							}
+						]
+					},
+					"icon": {
+						"type": "string",
+						"description": "Sets an icon to use alongside references to this collection. Must match Material Icon name. Defaults to the processed value of preview.icon if set, then falls back to wysiwyg for pages, event_available for posts, data_usage for data, and notes otherwise."
+					},
+					"name": {
+						"type": "string",
+						"description": "The display name of this collection. Used in headings and in the context menu for items in the collection. Auto-generated from the collection key if unset."
+					},
+					"new_preview_url": {
+						"type": "string",
+						"format": "uri-reference",
+						"description": "Preview your unbuilt pages (e.g. drafts) to another page’s output URL. The Visual Editor will load that set preview URL and use the Data Bindings and Previews to render your new page without saving."
+					},
+					"output": {
+						"type": "boolean",
+						"description": "Whether or not files in this collection produce files in the build output. Changes the default grouping for this collection in the navigation, and is used in consideration for the default _enabled_editors."
+					},
+					"path": {
+						"type": "string",
+						"format": "uri-reference",
+						"description": "The top-most folder where the files in this collection are stored. It is relative to source. Each collection must have a unique path."
+					},
+					"preview": {
+						"type": "object",
+						"description": "The preview definition for changing the way collection items are previewed across the editor.",
+						"properties": {
+							"gallery": {
+								"type": "object",
+								"description": "Details for large image/icon preview per item.",
+								"properties": {
+									"image": {
+										"$ref": "#/$defs/preview_entry",
+										"description": "Controls the gallery image shown per item."
+									},
+									"icon": {
+										"$ref": "#/$defs/preview_entry",
+										"description": "Controls the gallery icon shown per item. Must result in a Material Icon name."
+									},
+									"icon_color": {
+										"$ref": "#/$defs/preview_entry",
+										"description": "Controls the color of the gallery icon."
+									},
+									"fit": {
+										"$ref": "#/$defs/preview_image_fit",
+										"description": "Controls how the gallery image is positioned within the gallery."
+									}
+								}
+							},
+							"icon": {
+								"$ref": "#/$defs/preview_entry",
+								"description": "Controls the icon shown per item. Must result in a Material Icon name."
+							},
+							"icon_color": {
+								"$ref": "#/$defs/preview_entry",
+								"description": "Controls the color of the icon."
+							},
+							"image": {
+								"$ref": "#/$defs/preview_entry",
+								"description": "Controls the image shown per item."
+							},
+							"metadata": {
+								"type": "array",
+								"description": "Defines a list of items that can contain an image, icon and text.",
+								"items": {
+									"type": "object",
+									"properties": {
+										"image": {
+											"$ref": "#/$defs/preview_entry",
+											"description": "Controls the image shown per metadata item."
+										},
+										"icon": {
+											"$ref": "#/$defs/preview_entry",
+											"description": "Controls the icon shown per metadata item. Must result in a Material Icon name."
+										},
+										"icon_color": {
+											"$ref": "#/$defs/preview_entry",
+											"description": "Controls the color of the metadata icon."
+										},
+										"text": {
+											"$ref": "#/$defs/preview_entry",
+											"description": "Controls the main text shown per metadata item."
+										}
+									}
+								}
+							},
+							"subtext": {
+								"$ref": "#/$defs/preview_entry",
+								"description": "Controls the supporting text shown per item."
+							},
+							"text": {
+								"$ref": "#/$defs/preview_entry",
+								"description": "Controls the main text shown per item."
+							}
+						}
+					},
+					"schemas": {
+						"type": "object",
+						"description": "The set of schemas for this collection. Schemas are used when creating and editing files in this collection. Each entry corresponds to a schema that describes a data structure for this collection. The keys in this object should match the values used for schema_key inside each of this collection’s files.",
+						"properties": {
+							"default": {
+								"$ref": "#/$defs/schema_entry",
+								"description": "A special entry used when a file has no schema."
+							}
+						},
+						"additionalProperties": {
+							"$ref": "#/$defs/schema_entry"
+						}
+					},
+					"schema_key": {
+						"type": "string",
+						"description": "The key used in each file to identify the schema that file uses. The value this key represents in each of this collection’s files should match the keys in schemas.",
+						"default": "_schema"
+					},
+					"singular_key": {
+						"type": "string",
+						"description": "Overrides the default singular input key of the collection. Used for naming conventions for select and multiselect inputs."
+					},
+					"singular_name": {
+						"type": "string",
+						"description": "Overrides the default singular display name of the collection for various parts of the interface."
+					},
+					"sort": {
+						"type": "object",
+						"description": "Sets the default sorting for the collection file list. Defaults to the first option in sort_options.",
+						"required": [
+							"key"
+						],
+						"properties": {
+							"key": {
+								"$ref": "#/$defs/collection_sort_key"
+							},
+							"order": {
+								"$ref": "#/$defs/collection_sort_order"
+							}
+						}
+					},
+					"sort_options": {
+						"oneOf": [
+							{
+								"type": "array",
+								"description": "Controls the available options in the sort menu for the collection file list.",
+								"items": {
+									"type": "object",
+									"properties": {
+										"key": {
+											"$ref": "#/$defs/collection_sort_key"
+										},
+										"order": {
+											"$ref": "#/$defs/collection_sort_order"
+										},
+										"label": {
+											"type": "string",
+											"description": "Optional text to display in the sort option list."
+										}
+									}
+								}
+							},
+							{
+								"type": "boolean",
+								"enum": [
+									false
+								],
+								"description": "Hides the sort menu for the collection file list."
+							}
+						]
+					}
+				}
+			}
+		},
+		"collections_config_override": {
+			"type": "boolean",
+			"description": "Prevents CloudCannon from automatically discovering collections for supported SSGs if true.",
+			"default": false
+		},
+		"collection_groups": {
+			"type": "array",
+			"description": "Controls which collections are displayed in the site navigation and how those collections are grouped.",
+			"items": {
+				"type": "object",
+				"required": [
+					"heading",
+					"collections"
+				],
+				"properties": {
+					"heading": {
+						"type": "string",
+						"description": "The heading text that appears above this group."
+					},
+					"collections": {
+						"type": "array",
+						"description": "The collection keys to include in this group.",
+						"items": {
+							"type": "string",
+							"description": "The collection key to include in this group."
+						}
+					}
+				}
+			}
+		},
+		"data_config": {
+			"description": "Controls what data sets are available to populate select and multiselect inputs.",
+			"oneOf": [
+				{
+					"type": "boolean",
+					"description": "If true, all auto-discoverable data sets are added. Only applies to Jekyll and Hugo sites."
+				},
+				{
+					"type": "object",
+					"description": "The data sets to read. Keyed by SSG-specific data set name for Jekyll, Hugo and Eleventy sites, and the path to the data file(s) otherwise.",
+					"additionalProperties": {
+						"oneOf": [
+							{
+								"type": "boolean",
+								"description": "If true, states that this data set should be read. Only applies to Jekyll, Hugo and Eleventy sites."
+							},
+							{
+								"type": "object",
+								"description": "Defines the data set's file(s) and format to parse. Does not apply to Jekyll, Hugo and Eleventy sites.",
+								"properties": {
+									"path": {
+										"type": "string",
+										"description": "The path to a data file, or folder containing data files to parse into a data set."
+									},
+									"parser": {
+										"type": "string",
+										"description": "Optionally defines the format to parse the data file(s) in. This is automatically detected based on filename.",
+										"enum": [
+											"csv",
+											"front-matter",
+											"json",
+											"properties",
+											"toml",
+											"yaml"
+										]
+									}
+								}
+							}
+						]
+					}
+				}
+			]
+		},
+		"editor": {
+			"type": "object",
+			"required": [
+				"default_path"
+			],
+			"properties": {
+				"default_path": {
+					"type": "string",
+					"description": "Sets the URL to open the editor in from the dashboard.",
+					"format": "uri-reference"
+				}
+			}
+		},
+		"paths": {
+			"type": "object",
+			"description": "Global paths to common folders. These are often automatically populated from your SSG, and not all paths are relevant to all SSGs. Defaults vary across SSGs. Each path is relative to source.",
+			"properties": {
+				"uploads": {
+					"type": "string",
+					"format": "uri-reference",
+					"description": "Default location of newly uploaded site files."
+				},
+				"dam_uploads": {
+					"type": "string",
+					"format": "uri-reference",
+					"description": "Default location of newly uploaded DAM files."
+				},
+				"static": {
+					"type": "string",
+					"format": "uri-reference",
+					"description": "Location of statically copied assets."
+				},
+				"dam_static": {
+					"type": "string",
+					"format": "uri-reference",
+					"description": "Location of statically copied assets for DAM files."
+				},
+				"collections": {
+					"type": "string",
+					"format": "uri-reference",
+					"description": "Parent folder of all collections."
+				},
+				"data": {
+					"type": "string",
+					"format": "uri-reference",
+					"description": "Location of site data files."
+				},
+				"layouts": {
+					"type": "string",
+					"format": "uri-reference",
+					"description": "Top-most folder of site layout files. Only applies to Jekyll, Hugo and Eleventy sites."
+				},
+				"includes": {
+					"type": "string",
+					"format": "uri-reference",
+					"description": "Top-most folder of includes/partials/shortcode files. Only applies to Jekyll, Hugo and Eleventy sites."
+				}
+			}
+		},
+		"source": {
+			"type": "string",
+			"description": "Base path to your site source files, relative to the root folder of your site.",
+			"format": "uri-reference"
+		},
+		"source_editor": {
+			"type": "object",
+			"description": "Settings for the behavior and appearance of the Source Editor.",
+			"properties": {
+				"tab_size": {
+					"type": "number",
+					"description": "Defines how many spaces lines are auto indented by, and how many spaces tabs are shown as.",
+					"default": 2
+				},
+				"theme": {
+					"type": "string",
+					"description": "Changes the colors scheme for syntax highlighting in the editor.",
+					"enum": [
+						"ambiance",
+						"chaos",
+						"chrome",
+						"clouds",
+						"clouds_midnight",
+						"cobalt",
+						"crimson_editor",
+						"dawn",
+						"dracula",
+						"dreamweaver",
+						"eclipse",
+						"github",
+						"gob",
+						"gruvbox",
+						"idle_fingers",
+						"iplastic",
+						"katzenmilch",
+						"kr_theme",
+						"kuroir",
+						"merbivore",
+						"merbivore_soft",
+						"mono_industrial",
+						"monokai",
+						"nord_dark",
+						"pastel_on_dark",
+						"solarized_dark",
+						"solarized_light",
+						"sqlserver",
+						"terminal",
+						"textmate",
+						"tomorrow",
+						"tomorrow_night",
+						"tomorrow_night_blue",
+						"tomorrow_night_bright",
+						"tomorrow_night_eighties",
+						"twilight",
+						"vibrant_ink",
+						"xcode"
+					],
+					"default": "monokai"
+				},
+				"show_gutter": {
+					"type": "boolean",
+					"description": "Toggles displaying line numbers and code folding controls in the editor.",
+					"default": true
+				}
+			}
+		},
+		"timezone": {
+			"type": "string",
+			"description": "Timezone of your site in IANA format. Used by date and datetime inputs.",
+			"default": "Etc/UTC"
+		},
+		"output": {
+			"type": "string",
+			"description": "Generates the integration file in another folder. Not available for Jekyll, Hugo and Eleventy. Defaults to the root folder of your site."
 		}
 	}
 }
