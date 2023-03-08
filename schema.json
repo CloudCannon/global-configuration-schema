@@ -87,12 +87,836 @@
 			],
 			"default": "ascending"
 		},
+		"input_option_image_size_attributes": {
+			"type": "boolean",
+			"description": "Instructs the editor to save width and height on the image elements. This can prevent pop-in as a page loads. Defaults to true."
+		},
+		"input_option_width": {
+			"type": "number",
+			"description": "Defines the width of the bounding box used in the image resizing process defined with resize_style."
+		},
+		"input_option_height": {
+			"type": "number",
+			"description": "Defines the height of the bounding box used in the image resizing process defined with resize_style."
+		},
+		"input_option_resize_style": {
+			"type": "string",
+			"enum": [
+				"contain",
+				"cover",
+				"stretch"
+			],
+			"description": "Sets how uploaded image files are resized with a bounding box defined by width and height prior to upload. Defaults to contain. Has no effect when selecting existing images, or if width and height are not set."
+		},
+		"input_option_mime_type": {
+			"type": "string",
+			"enum": [
+				"image/jpeg",
+				"image/png"
+			],
+			"description": "Sets what format images are converted to prior to upload. The extension of the file is updated to match. Defaults to keeping the mime type of the uploaded file."
+		},
+		"input_option_expandable": {
+			"type": "boolean",
+			"description": "Controls whether or not images can be upscaled to fit the bounding box during resize prior to upload. Defaults to false. Has no effect if files are not resized."
+		},
+		"input_option_correct_orientation": {
+			"type": "boolean",
+			"description": "Controls whether or not the JPEG headers defining how an image should be rotated before being displayed is baked into images prior to upload. Defaults to true."
+		},
+		"input_option_tab_size": {
+			"type": "number",
+			"description": "Defines how many spaces lines are auto indented by, and how many spaces tabs are shown as.",
+			"default": 2
+		},
+		"input_option_theme": {
+			"type": "string",
+			"description": "Changes the colors scheme for syntax highlighting in the editor.",
+			"enum": [
+				"ambiance",
+				"chaos",
+				"chrome",
+				"clouds",
+				"clouds_midnight",
+				"cobalt",
+				"crimson_editor",
+				"dawn",
+				"dracula",
+				"dreamweaver",
+				"eclipse",
+				"github",
+				"gob",
+				"gruvbox",
+				"idle_fingers",
+				"iplastic",
+				"katzenmilch",
+				"kr_theme",
+				"kuroir",
+				"merbivore",
+				"merbivore_soft",
+				"mono_industrial",
+				"monokai",
+				"nord_dark",
+				"pastel_on_dark",
+				"solarized_dark",
+				"solarized_light",
+				"sqlserver",
+				"terminal",
+				"textmate",
+				"tomorrow",
+				"tomorrow_night",
+				"tomorrow_night_blue",
+				"tomorrow_night_bright",
+				"tomorrow_night_eighties",
+				"twilight",
+				"vibrant_ink",
+				"xcode"
+			],
+			"default": "monokai"
+		},
+		"input_option_show_gutter": {
+			"type": "boolean",
+			"description": "Toggles displaying line numbers and code folding controls in the editor.",
+			"default": true
+		},
+		"input_option_empty_type": {
+			"type": "string",
+			"enum": [
+				"object",
+				"array",
+				"string",
+				"null"
+			],
+			"description": "Set how an ‘empty’ value will be saved. Does not apply to existing empty values."
+		},
+		"input_option_paths": {
+			"type": "object",
+			"description": "Paths to where new asset files are uploaded to. They also set the default path when choosing existing images, and linking to existing files. Each path is relative to global source. Defaults to the global paths.",
+			"properties": {
+				"uploads": {
+					"type": "string",
+					"description": "The default location of newly uploaded site files."
+				},
+				"dam_uploads": {
+					"type": "string",
+					"description": "The default location of newly uploaded DAM files."
+				},
+				"dam_static": {
+					"type": "string",
+					"description": "The location of statically copied assets for DAM files."
+				}
+			}
+		},
 		"_inputs": {
 			"type": "object",
 			"description": "Controls the behavior and appearance of your inputs in the Data Editor.",
 			"additionalProperties": {
 				"type": "object",
 				"allOf": [
+					{
+						"if": {
+							"properties": {
+								"type": {
+									"const": "array"
+								}
+							}
+						},
+						"then": {
+							"properties": {
+								"options": {
+									"type": "object",
+									"description": "Options passed on to the input.",
+									"properties": {
+										"structures": {
+											"description": "Provides options for creating new items. When adding a new item, team members are prompted to choose from a number of values you have defined",
+											"oneOf": [
+												{
+													"type": "string",
+													"description": "References structures from the configuration cascade (e.g. _structures.gallery)."
+												},
+												{
+													"type": "object",
+													"description": "Structures definition to use directly."
+												}
+											]
+										},
+										"preview": {
+											"type": "object",
+											"description": "Changes the way data within an Array input's items are previewed before being expanded. If the input has structures, the preview from the structure definition is used instead for those items.",
+											"additionalProperties": false,
+											"properties": {
+												"icon": {
+													"$ref": "#/$defs/preview_entry",
+													"description": "Controls the icon shown per item. Must result in a Material Icon name."
+												},
+												"image": {
+													"$ref": "#/$defs/preview_entry",
+													"description": "Controls the image shown per item."
+												},
+												"subtext": {
+													"$ref": "#/$defs/preview_entry",
+													"description": "Controls the supporting text shown per item."
+												},
+												"text": {
+													"$ref": "#/$defs/preview_entry",
+													"description": "Controls the main text shown per item."
+												}
+											}
+										},
+										"empty_type": {
+											"$ref": "#/$defs/input_option_empty_type"
+										}
+									}
+								}
+							}
+						}
+					},
+					{
+						"if": {
+							"properties": {
+								"type": {
+									"const": "object"
+								}
+							}
+						},
+						"then": {
+							"properties": {
+								"options": {
+									"type": "object",
+									"description": "Options passed on to the input.",
+									"properties": {
+										"structures": {
+											"description": "Provides options for value of this object. When choosing an item, team members are prompted to choose from a number of values you have defined.",
+											"oneOf": [
+												{
+													"type": "string",
+													"description": "References structures from the configuration cascade (e.g. _structures.gallery)."
+												},
+												{
+													"type": "object",
+													"description": "Structures definition to use directly."
+												}
+											]
+										},
+										"preview": {
+											"type": "object",
+											"description": "Changes the way data within an Object input is previewed before being expanded. If the input has structures, the preview from the structure definition is used instead.",
+											"additionalProperties": false,
+											"properties": {
+												"icon": {
+													"$ref": "#/$defs/preview_entry",
+													"description": "Controls the icon shown per item. Must result in a Material Icon name."
+												},
+												"image": {
+													"$ref": "#/$defs/preview_entry",
+													"description": "Controls the image shown per item."
+												},
+												"subtext": {
+													"$ref": "#/$defs/preview_entry",
+													"description": "Controls the supporting text shown per item."
+												},
+												"text": {
+													"$ref": "#/$defs/preview_entry",
+													"description": "Controls the main text shown per item."
+												}
+											}
+										},
+										"empty_type": {
+											"$ref": "#/$defs/input_option_empty_type"
+										}
+									}
+								}
+							}
+						}
+					},
+					{
+						"if": {
+							"properties": {
+								"type": {
+									"const": "color"
+								}
+							}
+						},
+						"then": {
+							"properties": {
+								"options": {
+									"type": "object",
+									"description": "Options passed on to the input.",
+									"properties": {
+										"format": {
+											"type": "string",
+											"description": "Sets what format the color value is saved as.",
+											"enum": [
+												"rgb",
+												"hex",
+												"hsl",
+												"hsv"
+											]
+										},
+										"alpha": {
+											"type": "boolean",
+											"description": "Toggles showing a control for adjusting the transparency of the selected color."
+										},
+										"empty_type": {
+											"$ref": "#/$defs/input_option_empty_type"
+										}
+									}
+								}
+							}
+						}
+					},
+					{
+						"if": {
+							"properties": {
+								"type": {
+									"anyOf": [
+										{
+											"const": "number"
+										},
+										{
+											"const": "range"
+										}
+									]
+								}
+							}
+						},
+						"then": {
+							"properties": {
+								"options": {
+									"type": "object",
+									"description": "Options passed on to the input.",
+									"properties": {
+										"min": {
+											"type": "number",
+											"description": "The lowest value in the range of permitted values."
+										},
+										"max": {
+											"type": "number",
+											"description": "The greatest value in the range of permitted values."
+										},
+										"step": {
+											"type": {
+												"oneOf": [
+													{
+														"type": "number"
+													},
+													{
+														"type": "string",
+														"enum": [
+															"any"
+														]
+													}
+												]
+											},
+											"description": "A number that specifies the granularity that the value must adhere to, or the special value any, which allows any decimal value between max and min."
+										},
+										"empty_type": {
+											"$ref": "#/$defs/input_option_empty_type"
+										}
+									}
+								}
+							}
+						}
+					},
+					{
+						"if": {
+							"properties": {
+								"type": {
+									"anyOf": [
+										{
+											"const": "time"
+										},
+										{
+											"const": "twitter"
+										},
+										{
+											"const": "instagram"
+										},
+										{
+											"const": "github"
+										},
+										{
+											"const": "pinterest"
+										},
+										{
+											"const": "facebook"
+										}
+									]
+								}
+							}
+						},
+						"then": {
+							"properties": {
+								"options": {
+									"type": "object",
+									"description": "Options passed on to the input.",
+									"properties": {
+										"empty_type": {
+											"$ref": "#/$defs/input_option_empty_type"
+										}
+									}
+								}
+							}
+						}
+					},
+					{
+						"if": {
+							"properties": {
+								"type": {
+									"anyOf": [
+										{
+											"const": "date"
+										},
+										{
+											"const": "datetime"
+										}
+									]
+								}
+							}
+						},
+						"then": {
+							"properties": {
+								"options": {
+									"type": "object",
+									"description": "Options passed on to the input.",
+									"properties": {
+										"timezone": {
+											"type": "string",
+											"description": "Specifies the time zone that dates are displayed, edited, and saved in. Must be in the tz database name format (e.g. Pacific/Auckland or America/New_York). Defaults to the global timezone configured, which defaults to Etc/UTC."
+										},
+										"empty_type": {
+											"$ref": "#/$defs/input_option_empty_type"
+										}
+									}
+								}
+							}
+						}
+					},
+					{
+						"if": {
+							"properties": {
+								"type": {
+									"const": "code"
+								}
+							}
+						},
+						"then": {
+							"properties": {
+								"options": {
+									"type": "object",
+									"description": "Options passed on to the input.",
+									"properties": {
+										"max_visible_lines": {
+											"type": "number",
+											"description": "Sets the maximum number of visible lines for this input, effectively controlling maximum height. When the containing text exceeds this number, the input becomes a scroll area. Defaults to 30."
+										},
+										"min_visible_lines": {
+											"type": "number",
+											"description": "Sets the minimum number of visible lines for this input, effectively controlling initial height. When the containing text exceeds this number, the input grows line by line to the lines defined by max_visible_lines. Defaults to 10."
+										},
+										"tab_size": {
+											"$ref": "#/$defs/input_option_tab_size"
+										},
+										"theme": {
+											"$ref": "#/$defs/input_option_theme"
+										},
+										"show_gutter": {
+											"$ref": "#/$defs/input_option_show_gutter"
+										},
+										"syntax": {
+											"type": "string",
+											"description": "Changes how the editor parses your content for syntax highlighting.",
+											"enum": [
+												"abap",
+												"abc",
+												"actionscript",
+												"ada",
+												"alda",
+												"apache_conf",
+												"apex",
+												"applescript",
+												"aql",
+												"asciidoc",
+												"asl",
+												"assembly_x86",
+												"autohotkey",
+												"batchfile",
+												"c9search",
+												"c_cpp",
+												"cirru",
+												"clojure",
+												"cobol",
+												"coffee",
+												"coldfusion",
+												"crystal",
+												"csharp",
+												"csound_document",
+												"csound_orchestra",
+												"csound_score",
+												"csp",
+												"css",
+												"curly",
+												"d",
+												"dart",
+												"diff",
+												"django",
+												"dockerfile",
+												"dot",
+												"drools",
+												"edifact",
+												"eiffel",
+												"ejs",
+												"elixir",
+												"elm",
+												"erlang",
+												"forth",
+												"fortran",
+												"fsharp",
+												"fsl",
+												"ftl",
+												"gcode",
+												"gherkin",
+												"gitignore",
+												"glsl",
+												"gobstones",
+												"golang",
+												"graphqlschema",
+												"groovy",
+												"haml",
+												"handlebars",
+												"haskell",
+												"haskell_cabal",
+												"haxe",
+												"hjson",
+												"html",
+												"html_elixir",
+												"html_ruby",
+												"ini",
+												"io",
+												"jack",
+												"jade",
+												"java",
+												"javascript",
+												"json",
+												"json5",
+												"jsoniq",
+												"jsp",
+												"jssm",
+												"jsx",
+												"julia",
+												"kotlin",
+												"latex",
+												"less",
+												"liquid",
+												"lisp",
+												"livescript",
+												"logiql",
+												"logtalk",
+												"lsl",
+												"lua",
+												"luapage",
+												"lucene",
+												"makefile",
+												"markdown",
+												"mask",
+												"matlab",
+												"maze",
+												"mediawiki",
+												"mel",
+												"mixal",
+												"mushcode",
+												"mysql",
+												"nginx",
+												"nim",
+												"nix",
+												"nsis",
+												"nunjucks",
+												"objectivec",
+												"ocaml",
+												"pascal",
+												"perl",
+												"perl6",
+												"pgsql",
+												"php",
+												"php_laravel_blade",
+												"pig",
+												"plain_text",
+												"powershell",
+												"praat",
+												"prisma",
+												"prolog",
+												"properties",
+												"protobuf",
+												"puppet",
+												"python",
+												"qml",
+												"r",
+												"razor",
+												"rdoc",
+												"red",
+												"redshift",
+												"rhtml",
+												"rst",
+												"ruby",
+												"rust",
+												"sass",
+												"scad",
+												"scala",
+												"scheme",
+												"scss",
+												"sh",
+												"sjs",
+												"slim",
+												"smarty",
+												"snippets",
+												"soy_template",
+												"space",
+												"sparql",
+												"sql",
+												"sqlserver",
+												"stylus",
+												"svg",
+												"swift",
+												"tcl",
+												"terraform",
+												"tex",
+												"text",
+												"textile",
+												"toml",
+												"tsx",
+												"turtle",
+												"twig",
+												"typescript",
+												"vala",
+												"vbscript",
+												"velocity",
+												"verilog",
+												"vhdl",
+												"visualforce",
+												"wollok",
+												"xml",
+												"xquery",
+												"yaml",
+												"zeek"
+											]
+										},
+										"empty_type": {
+											"$ref": "#/$defs/input_option_empty_type"
+										}
+									}
+								}
+							}
+						}
+					},
+					{
+						"if": {
+							"properties": {
+								"type": {
+									"anyOf": [
+										{
+											"const": "select"
+										},
+										{
+											"const": "multichoice"
+										},
+										{
+											"const": "select"
+										},
+										{
+											"const": "multichoice"
+										}
+									]
+								}
+							}
+						},
+						"then": {
+							"properties": {
+								"options": {
+									"type": "object",
+									"description": "Options passed on to the input.",
+									"properties": {
+										"allow_create": {
+											"type": "boolean",
+											"description": "Allows new text values to be created at edit time. Defaults to false. Has no effect on select inputs."
+										},
+										"allow_empty": {
+											"type": "boolean",
+											"description": "Provides an empty option alongside the options provided by values. Defaults to true. Has no effect on multiselect inputs."
+										},
+										"empty_type": {
+											"$ref": "#/$defs/input_option_empty_type"
+										},
+										"preview": {
+											"type": "object",
+											"description": "The preview definition for changing the way collection items are previewed across the editor.",
+											"additionalProperties": false,
+											"properties": {
+												"icon": {
+													"$ref": "#/$defs/preview_entry",
+													"description": "Controls the icon shown per item. Must result in a Material Icon name."
+												},
+												"image": {
+													"$ref": "#/$defs/preview_entry",
+													"description": "Controls the image shown per item."
+												},
+												"text": {
+													"$ref": "#/$defs/preview_entry",
+													"description": "Controls the main text shown per item."
+												}
+											}
+										},
+										"values": {
+											"description": "Defines the values available to choose from. Defaults to fetching values from the naming convention (e.g. colors or my_colors for data set colors).",
+											"oneOf": [
+												{
+													"type": "string",
+													"description": "References a data set from an external source (e.g. data.authors or collections.posts)."
+												},
+												{
+													"type": "object",
+													"description": "Object containing data set values to use directly."
+												},
+												{
+													"type": "array",
+													"description": "Array containing data set values to use directly."
+												}
+											]
+										},
+										"value_key": {
+											"type": "string",
+											"description": "Defines the key used for mapping between saved values and objects in values. This changes how the input saves selected values to match. Has no effect unless values results in an array of objects."
+										}
+									}
+								}
+							}
+						}
+					},
+					{
+						"if": {
+							"properties": {
+								"type": {
+									"anyOf": [
+										{
+											"const": "file"
+										},
+										{
+											"const": "document"
+										},
+										{
+											"const": "image"
+										}
+									]
+								}
+							}
+						},
+						"then": {
+							"properties": {
+								"options": {
+									"type": "object",
+									"description": "Options passed on to the input.",
+									"properties": {
+										"accepts_mime_types": {
+											"description": "Restricts which file types are available to select or upload to this input. Each file path input has a different default.",
+											"oneOf": [
+												{
+													"type": "string",
+													"description": "A comma-separated (no spaces) list of the mime types you want to filter by. The string * by itself allows any type."
+												},
+												{
+													"type": "array",
+													"description": "An array of strings for each mime type you want to filter by."
+												}
+											]
+										},
+										"paths": {
+											"$ref": "#/$defs/input_option_paths"
+										},
+										"empty_type": {
+											"$ref": "#/$defs/input_option_empty_type"
+										},
+										"width": {
+											"$ref": "#/$defs/input_option_width"
+										},
+										"height": {
+											"$ref": "#/$defs/input_option_height"
+										},
+										"resize_style": {
+											"$ref": "#/$defs/input_option_resize_style"
+										},
+										"mime_type": {
+											"$ref": "#/$defs/input_option_mime_type"
+										},
+										"expandable": {
+											"$ref": "#/$defs/input_option_expandable"
+										},
+										"correct_orientation": {
+											"$ref": "#/$defs/input_option_correct_orientation"
+										}
+									}
+								}
+							}
+						}
+					},
+					{
+						"if": {
+							"properties": {
+								"type": {
+									"const": "url"
+								}
+							}
+						},
+						"then": {
+							"properties": {
+								"options": {
+									"type": "object",
+									"description": "Options passed on to the input.",
+									"properties": {
+										"paths": {
+											"$ref": "#/$defs/input_option_paths"
+										},
+										"empty_type": {
+											"$ref": "#/$defs/input_option_empty_type"
+										}
+									}
+								}
+							}
+						}
+					},
+					{
+						"if": {
+							"properties": {
+								"type": {
+									"anyOf": [
+										{
+											"const": "disabled"
+										},
+										{
+											"const": "textarea"
+										},
+										{
+											"const": "text"
+										},
+										{
+											"const": "email"
+										}
+									]
+								}
+							}
+						},
+						"then": {
+							"properties": {
+								"options": {
+									"type": "object",
+									"description": "Options passed on to the input.",
+									"properties": {
+										"empty_type": {
+											"$ref": "#/$defs/input_option_empty_type"
+										}
+									}
+								}
+							}
+						}
+					},
 					{
 						"if": {
 							"properties": {
@@ -112,120 +936,150 @@
 							"properties": {
 								"options": {
 									"type": "object",
-									"description": "Options passed on to the rich text input.",
+									"description": "Options passed on to the input.",
 									"properties": {
+										"allow_resize": {
+											"type": "boolean",
+											"description": "Shows or hides the resize handler to vertically resize the input. Defaults to true."
+										},
+										"initial_height": {
+											"type": "number",
+											"description": "Defines the initial height of this input in pixels (px). Defaults to 320. Supports values between 135 and 1200."
+										},
+										"image_size_attributes": {
+											"$ref": "#/$defs/input_option_image_size_attributes"
+										},
+										"width": {
+											"$ref": "#/$defs/input_option_width"
+										},
+										"height": {
+											"$ref": "#/$defs/input_option_height"
+										},
+										"resize_style": {
+											"$ref": "#/$defs/input_option_resize_style"
+										},
+										"mime_type": {
+											"$ref": "#/$defs/input_option_mime_type"
+										},
+										"expandable": {
+											"$ref": "#/$defs/input_option_expandable"
+										},
+										"correct_orientation": {
+											"$ref": "#/$defs/input_option_correct_orientation"
+										},
+										"paths": {
+											"$ref": "#/$defs/input_option_paths"
+										},
+										"empty_type": {
+											"$ref": "#/$defs/input_option_empty_type"
+										},
 										"bold": {
-											"type": "boolean"
+											"type": "boolean",
+											"description": "Enables a control to set selected text to bold."
 										},
 										"italic": {
-											"type": "boolean"
+											"type": "boolean",
+											"description": "Enables a control to italicize selected text."
 										},
 										"removeformat": {
-											"type": "boolean"
+											"type": "boolean",
+											"description": "Enables the control to remove formatting from text. Applies to formatting from bold, italic, underline, strike, subscript, and superscript. Does not remove other styles or formatting."
+										},
+										"copyformatting": {
+											"type": "boolean",
+											"description": "Enables a control to copy formatting from text to other text. Only applies to formatting from bold, italic, underline, strike, subscript, and superscript. Does not copy other styles or formatting."
 										},
 										"link": {
-											"type": "boolean"
+											"type": "boolean",
+											"description": "Enables a control to create hyperlinks around selected text."
 										},
 										"undo": {
-											"type": "boolean"
+											"type": "boolean",
+											"description": "Enables a control to undo recent edits. Undo is always enabled through standard OS-specific keyboard shortcuts."
 										},
 										"redo": {
-											"type": "boolean"
+											"type": "boolean",
+											"description": "Enables a control to redo recent edits undone with undo. Redo is always enabled through standard OS-specific keyboard shortcuts."
 										},
 										"underline": {
-											"type": "boolean"
+											"type": "boolean",
+											"description": "Enables a control to underline selected text."
 										},
 										"strike": {
-											"type": "boolean"
+											"type": "boolean",
+											"description": "Enables a control to strike selected text."
 										},
 										"subscript": {
-											"type": "boolean"
+											"type": "boolean",
+											"description": "Enables a control to set selected text to subscript."
 										},
 										"superscript": {
-											"type": "boolean"
+											"type": "boolean",
+											"description": "Enables a control to set selected text to superscript."
 										},
 										"code": {
-											"type": "boolean"
+											"type": "boolean",
+											"description": "Enables a control to set selected text to inline code, and unselected blocks of text to code blocks."
 										},
 										"format": {
-											"oneOf": [
-												{
-													"type": "boolean"
-												},
-												{
-													"type": "string"
-												}
-											]
+											"type": "string",
+											"description": "Enables a drop down menu for structured text. Has options for p, h1, h2, h3, h4, h5, h6, pre, address, and div. Set as space separated options, e.g. format: p h1 h2."
 										},
 										"blockquote": {
-											"type": "boolean"
+											"type": "boolean",
+											"description": "Enables a control to wrap blocks of text in block quotes."
 										},
 										"horizontalrule": {
-											"type": "boolean"
+											"type": "boolean",
+											"description": "Enables a control to insert a horizontal rule."
 										},
 										"numberedlist": {
-											"type": "boolean"
+											"type": "boolean",
+											"description": "Enables a control to insert a numbered list, or to convert selected blocks of text into a numbered list."
 										},
 										"bulletedlist": {
-											"type": "boolean"
+											"type": "boolean",
+											"description": "Enables a control to insert an unordered list, or to convert selected blocks of text into a unordered list."
 										},
 										"outdent": {
-											"type": "boolean"
+											"type": "boolean",
+											"description": "Enables a control to reduce indentation for numbered and unordered lists."
 										},
 										"indent": {
-											"type": "boolean"
+											"type": "boolean",
+											"description": "Enables a control to increase indentation for numbered and unordered lists."
 										},
 										"image": {
-											"type": "boolean"
+											"type": "boolean",
+											"description": "Enables a control to insert an image. The image can be uploaded, existing or an external link."
 										},
 										"embed": {
-											"type": "boolean"
+											"type": "boolean",
+											"description": "Enables a control to insert a region of raw HTML, including YouTube, Vimeo, Tweets, and other media. Embedded content is sanitized to mitigate XSS risks, which includes removing style tags. Embeds containing script tags are not loaded in the editor."
 										},
 										"table": {
-											"type": "boolean"
+											"type": "boolean",
+											"description": "Enables a control to insert a table. Further options for table cells are available in the context menu for cells within the editor."
 										},
 										"styles": {
-											"type": "string"
+											"type": "string",
+											"description": "Enables a drop down menu for editors to style selected text or blocks or text. Styles are the combination of an element and class name. The value for this option is the path (either source or build output) to the CSS file containing the styles."
 										},
 										"left": {
-											"oneOf": [
-												{
-													"type": "boolean"
-												},
-												{
-													"type": "string"
-												}
-											]
+											"type": "string",
+											"description": "Enables a control to left align text by toggling a class name for a block of text. The value is the class name the editor should add to align the text. The styles for this class need to be listed in the styles file to take effect outside of the input."
 										},
 										"center": {
-											"oneOf": [
-												{
-													"type": "boolean"
-												},
-												{
-													"type": "string"
-												}
-											]
+											"type": "string",
+											"description": "Enables a control to center align text by toggling a class name for a block of text. The value is the class name the editor should add to align the text. The styles for this class need to be listed in the styles file to take effect outside of the input."
 										},
 										"right": {
-											"oneOf": [
-												{
-													"type": "boolean"
-												},
-												{
-													"type": "string"
-												}
-											]
+											"type": "string",
+											"description": "Enables a control to right align text by toggling a class name for a block of text. The value is the class name the editor should add to align the text. The styles for this class need to be listed in the styles file to take effect outside of the input."
 										},
 										"justify": {
-											"oneOf": [
-												{
-													"type": "boolean"
-												},
-												{
-													"type": "string"
-												}
-											]
+											"type": "string",
+											"description": "Enables a control to justify text by toggling a class name for a block of text. The value is the class name the editor should add to justify the text. The styles for this class need to be listed in the styles file to take effect outside of the input."
 										}
 									}
 								}
@@ -848,59 +1702,13 @@
 			"additionalProperties": false,
 			"properties": {
 				"tab_size": {
-					"type": "number",
-					"description": "Defines how many spaces lines are auto indented by, and how many spaces tabs are shown as.",
-					"default": 2
+					"$ref": "#/$defs/input_option_tab_size"
 				},
 				"theme": {
-					"type": "string",
-					"description": "Changes the colors scheme for syntax highlighting in the editor.",
-					"enum": [
-						"ambiance",
-						"chaos",
-						"chrome",
-						"clouds",
-						"clouds_midnight",
-						"cobalt",
-						"crimson_editor",
-						"dawn",
-						"dracula",
-						"dreamweaver",
-						"eclipse",
-						"github",
-						"gob",
-						"gruvbox",
-						"idle_fingers",
-						"iplastic",
-						"katzenmilch",
-						"kr_theme",
-						"kuroir",
-						"merbivore",
-						"merbivore_soft",
-						"mono_industrial",
-						"monokai",
-						"nord_dark",
-						"pastel_on_dark",
-						"solarized_dark",
-						"solarized_light",
-						"sqlserver",
-						"terminal",
-						"textmate",
-						"tomorrow",
-						"tomorrow_night",
-						"tomorrow_night_blue",
-						"tomorrow_night_bright",
-						"tomorrow_night_eighties",
-						"twilight",
-						"vibrant_ink",
-						"xcode"
-					],
-					"default": "monokai"
+					"$ref": "#/$defs/input_option_theme"
 				},
 				"show_gutter": {
-					"type": "boolean",
-					"description": "Toggles displaying line numbers and code folding controls in the editor.",
-					"default": true
+					"$ref": "#/$defs/input_option_show_gutter"
 				}
 			}
 		},
