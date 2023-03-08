@@ -42,7 +42,7 @@
 				},
 				{
 					"type": "object",
-					"properties": {
+					"additionalProperties": {
 						"oneOf": [
 							{
 								"type": "string"
@@ -55,6 +55,7 @@
 								"required": [
 									"key"
 								],
+								"additionalProperties": false,
 								"properties": {
 									"key": {
 										"type": "string"
@@ -184,8 +185,7 @@
 											"type": "boolean"
 										},
 										"styles": {
-											"type": "string",
-											"format": "uri-reference"
+											"type": "string"
 										},
 										"left": {
 											"oneOf": [
@@ -305,8 +305,7 @@
 					},
 					"cascade": {
 						"type": "boolean",
-						"description": "Specifies whether or not this input configuration should be merged with any matching, less specific configuration.",
-						"default": true
+						"description": "Specifies whether or not this input configuration should be merged with any matching, less specific configuration. Defaults to true."
 					}
 				}
 			}
@@ -350,8 +349,7 @@
 									"type": "string"
 								},
 								"image": {
-									"type": "string",
-									"format": "uri-reference"
+									"type": "string"
 								},
 								"description": {
 									"type": "string"
@@ -375,7 +373,6 @@
 	"properties": {
 		"base_url": {
 			"type": "string",
-			"format": "uri-reference",
 			"description": "The subpath your output files are mounted at."
 		},
 		"collections_config": {
@@ -383,12 +380,14 @@
 			"description": "Definitions for your collections, the related sets of content files for your site grouped by folder. Entries are keyed by your collection key, and contain configuration specific to that collection.",
 			"additionalProperties": {
 				"type": "object",
+				"additionalProperties": false,
 				"properties": {
 					"add_options": {
 						"type": "array",
 						"description": "Changes the options presented in the add menu in the collection file list. Defaults to an automatically generated list from schemas, or first file in that collection if no schemas are configured.",
 						"items": {
 							"type": "object",
+							"additionalProperties": false,
 							"properties": {
 								"name": {
 									"type": "string",
@@ -400,7 +399,6 @@
 								},
 								"href": {
 									"type": "string",
-									"format": "uri-reference",
 									"description": "The link that opens when the option is clicked. Can either be an external or internal link. If internal, the link is relative to the current site. If this is set, the collection, editor, base_path and schema options are ignored. Since this acts as an override, we recommend using those options directly in favor of this if possible."
 								},
 								"editor": {
@@ -431,6 +429,7 @@
 						"oneOf": [
 							{
 								"type": "object",
+								"additionalProperties": false,
 								"properties": {
 									"extra_data": {
 										"type": "object",
@@ -486,10 +485,10 @@
 						"required": [
 							"url"
 						],
+						"additionalProperties": false,
 						"properties": {
 							"url": {
 								"type": "string",
-								"format": "uri-reference",
 								"description": "The href value of the link"
 							},
 							"text": {
@@ -508,6 +507,7 @@
 						"oneOf": [
 							{
 								"type": "object",
+								"additionalProperties": false,
 								"properties": {
 									"base": {
 										"$ref": "#/$defs/collection_filter_base"
@@ -546,25 +546,29 @@
 					},
 					"new_preview_url": {
 						"type": "string",
-						"format": "uri-reference",
 						"description": "Preview your unbuilt pages (e.g. drafts) to another page’s output URL. The Visual Editor will load that set preview URL and use the Data Bindings and Previews to render your new page without saving."
 					},
 					"output": {
 						"type": "boolean",
 						"description": "Whether or not files in this collection produce files in the build output. Changes the default grouping for this collection in the navigation, and is used in consideration for the default _enabled_editors."
 					},
+					"parse_branch_index": {
+						"type": "boolean",
+						"description": "Assigns Hugo branch index files to this collection. Defaults to false, except for the auto-discovered pages collection. Only applies to Hugo sites."
+					},
 					"path": {
 						"type": "string",
-						"format": "uri-reference",
 						"description": "The top-most folder where the files in this collection are stored. It is relative to source. Each collection must have a unique path."
 					},
 					"preview": {
 						"type": "object",
 						"description": "The preview definition for changing the way collection items are previewed across the editor.",
+						"additionalProperties": false,
 						"properties": {
 							"gallery": {
 								"type": "object",
 								"description": "Details for large image/icon preview per item.",
+								"additionalProperties": false,
 								"properties": {
 									"image": {
 										"$ref": "#/$defs/preview_entry",
@@ -601,6 +605,7 @@
 								"description": "Defines a list of items that can contain an image, icon and text.",
 								"items": {
 									"type": "object",
+									"additionalProperties": false,
 									"properties": {
 										"image": {
 											"$ref": "#/$defs/preview_entry",
@@ -663,6 +668,7 @@
 						"required": [
 							"key"
 						],
+						"additionalProperties": false,
 						"properties": {
 							"key": {
 								"$ref": "#/$defs/collection_sort_key"
@@ -679,6 +685,7 @@
 								"description": "Controls the available options in the sort menu for the collection file list.",
 								"items": {
 									"type": "object",
+									"additionalProperties": false,
 									"properties": {
 										"key": {
 											"$ref": "#/$defs/collection_sort_key"
@@ -719,6 +726,7 @@
 					"heading",
 					"collections"
 				],
+				"additionalProperties": false,
 				"properties": {
 					"heading": {
 						"type": "string",
@@ -783,68 +791,61 @@
 			"required": [
 				"default_path"
 			],
+			"additionalProperties": false,
 			"properties": {
 				"default_path": {
 					"type": "string",
-					"description": "Sets the URL to open the editor in from the dashboard.",
-					"format": "uri-reference"
+					"description": "Sets the URL to open the editor in from the dashboard."
 				}
 			}
 		},
 		"paths": {
 			"type": "object",
 			"description": "Global paths to common folders. These are often automatically populated from your SSG, and not all paths are relevant to all SSGs. Defaults vary across SSGs. Each path is relative to source.",
+			"additionalProperties": false,
 			"properties": {
 				"uploads": {
 					"type": "string",
-					"format": "uri-reference",
 					"description": "Default location of newly uploaded site files."
 				},
 				"dam_uploads": {
 					"type": "string",
-					"format": "uri-reference",
 					"description": "Default location of newly uploaded DAM files."
 				},
 				"static": {
 					"type": "string",
-					"format": "uri-reference",
 					"description": "Location of statically copied assets."
 				},
 				"dam_static": {
 					"type": "string",
-					"format": "uri-reference",
 					"description": "Location of statically copied assets for DAM files."
 				},
 				"collections": {
 					"type": "string",
-					"format": "uri-reference",
 					"description": "Parent folder of all collections."
 				},
 				"data": {
 					"type": "string",
-					"format": "uri-reference",
 					"description": "Location of site data files."
 				},
 				"layouts": {
 					"type": "string",
-					"format": "uri-reference",
 					"description": "Top-most folder of site layout files. Only applies to Jekyll, Hugo and Eleventy sites."
 				},
 				"includes": {
 					"type": "string",
-					"format": "uri-reference",
 					"description": "Top-most folder of includes/partials/shortcode files. Only applies to Jekyll, Hugo and Eleventy sites."
 				}
 			}
 		},
 		"source": {
 			"type": "string",
-			"description": "Base path to your site source files, relative to the root folder of your site.",
-			"format": "uri-reference"
+			"description": "Base path to your site source files, relative to the root folder of your site."
 		},
 		"source_editor": {
 			"type": "object",
 			"description": "Settings for the behavior and appearance of the Source Editor.",
+			"additionalProperties": false,
 			"properties": {
 				"tab_size": {
 					"type": "number",
