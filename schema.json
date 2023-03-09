@@ -1542,6 +1542,7 @@
 		},
 		"editables:block": {
 			"type": "object",
+			"description": "Toolbar options for block editable regions (e.g. <div> or <section>).",
 			"additionalProperties": false,
 			"properties": {
 				"image_size_attributes": {
@@ -1664,6 +1665,8 @@
 			"properties": {
 				"text": {
 					"type": "object",
+					"description": "Toolbar options for simple text editable regions like (e.g. <p>).",
+
 					"additionalProperties": false,
 					"properties": {
 						"paths": {
@@ -1712,6 +1715,7 @@
 				},
 				"link": {
 					"type": "object",
+					"description": "Toolbar options for inline editable regions on <a> tags.",
 					"additionalProperties": false,
 					"properties": {
 						"paths": {
@@ -1722,6 +1726,7 @@
 				"image": {
 					"type": "object",
 					"additionalProperties": false,
+					"description": "Toolbar options for image editable regions (i.e. <img>)",
 					"properties": {
 						"image_size_attributes": {
 							"$ref": "#/$defs/_inputs:image_size_attributes"
@@ -1750,7 +1755,8 @@
 					}
 				},
 				"content": {
-					"$ref": "#/$defs/editables:block"
+					"$ref": "#/$defs/editables:block",
+					"description": "Toolbar options for the main content section of the Content Editor."
 				}
 			}
 		}
@@ -2080,6 +2086,7 @@
 				},
 				"editor": {
 					"type": "object",
+					"description": "Contains settings for the default editor actions on your site.",
 					"required": [
 						"default_path"
 					],
